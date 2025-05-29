@@ -8,30 +8,32 @@ import { Response } from 'express';
 import { handleError } from 'src/utils/errorHandling';
 
 @Injectable()
-export class ChatService {
+export class CodeService {
   constructor(private configService: ConfigService) {}
 
   async sendEvent(createMessageDto: CreateMessageDto, res: Response) {
+    // await new Promise((resolve) => {
+    //   setTimeout(() => {
+    //     resolve('hi');
+    //   }, 35000);
+    // });
+    // return 'Hi THERE';
     try {
       let code: string | undefined;
-      if (createMessageDto.codeFiles) {
-        code = createMessageDto.codeFiles
-          .map((filePath) => {
-            const content = loadFile(filePath);
-            return `// FILE: ${filePath}\n${content}`;
-          })
-          .join('\n\n=================\n\n');
-      }
-
       if (createMessageDto.prompt || createMessageDto.codeFiles) {
+        if (createMessageDto.codeFiles) {
+          code = createMessageDto.codeFiles
+            .map((filePath) => {
+              const content = loadFile(filePath);
+              return `// FILE: ${filePath}\n${content}`;
+            })
+            .join('\n\n=================\n\n');
+        }
+
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
         res.flushHeaders();
-
-        const keepAliveInterval = setInterval(() => {
-          res.write('.');
-        }, 27000);
 
         const model = new ChatGroq({
           model: 'llama-3.3-70b-versatile',
@@ -55,13 +57,13 @@ export class ChatService {
             typeof chunk.content === 'string'
               ? chunk.content
               : JSON.stringify(chunk.content);
-          res.write(`${content}`);
+          res.write(`data: ${content}\n\n`);
         }
-        clearInterval(keepAliveInterval);
-        res.end();
       }
     } catch (error) {
       handleError(error);
+    } finally {
+      res.end();
     }
   }
 }
