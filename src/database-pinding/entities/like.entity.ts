@@ -5,11 +5,11 @@ import {
   CreateDateColumn,
   JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Post } from './post.entity';
+import { userEntity } from './user.entity';
+import { postEntity } from './post.entity';
 
 @Entity('likes')
-export class Like {
+export class likeEntity {
   @PrimaryColumn({ name: 'user_id' })
   userId: number;
 
@@ -19,11 +19,11 @@ export class Like {
   @CreateDateColumn({ name: 'liked_at' })
   likedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })
+  @ManyToOne(() => userEntity, (user) => user.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: userEntity;
 
-  @ManyToOne(() => Post, (post) => post.likes, { onDelete: 'CASCADE' })
+  @ManyToOne(() => postEntity, (post) => post.likes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
-  post: Post;
+  post: postEntity;
 }

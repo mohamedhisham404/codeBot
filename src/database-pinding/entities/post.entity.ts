@@ -7,11 +7,11 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Like } from './like.entity';
+import { userEntity } from './user.entity';
+import { likeEntity } from './like.entity';
 
 @Entity('posts')
-export class Post {
+export class postEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,10 +21,10 @@ export class Post {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
+  @ManyToOne(() => userEntity, (user) => user.posts, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: userEntity;
 
-  @OneToMany(() => Like, (like) => like.post)
-  likes: Like[];
+  @OneToMany(() => likeEntity, (like) => like.post)
+  likes: likeEntity[];
 }

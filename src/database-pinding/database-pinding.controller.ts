@@ -25,4 +25,12 @@ export class DatabasePindingController {
   async idPinding(@Body() idPindingDto: idPindingDto, @Res() res: Response) {
     return this.databasePindingService.idPinding(idPindingDto, res);
   }
+
+  @Post('entity')
+  async entityPinding(
+    @Body() idPindingDto: idPindingDto,
+    @Res() res: Response,
+  ) {
+    return this.databasePindingService.entityPinding(idPindingDto, res);
+  }
 }

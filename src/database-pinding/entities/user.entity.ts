@@ -5,11 +5,11 @@ import {
   CreateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Post } from './post.entity';
-import { Like } from './like.entity';
+import { postEntity } from './post.entity';
+import { likeEntity } from './like.entity';
 
 @Entity('users')
-export class User {
+export class userEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -28,9 +28,9 @@ export class User {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @OneToMany(() => Post, (post) => post.user)
-  posts: Post[];
+  @OneToMany(() => postEntity, (post) => post.user)
+  posts: postEntity[];
 
-  @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  @OneToMany(() => likeEntity, (like) => like.user)
+  likes: likeEntity[];
 }
