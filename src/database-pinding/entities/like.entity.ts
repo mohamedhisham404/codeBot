@@ -4,12 +4,16 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { userEntity } from './user.entity';
 import { postEntity } from './post.entity';
 
 @Entity('likes')
 export class likeEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @PrimaryColumn({ name: 'user_id' })
   userId: number;
 

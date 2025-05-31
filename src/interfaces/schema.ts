@@ -1,5 +1,6 @@
 export interface SchemaData {
-  entity: string;
+  rootEntity: string;
+  relationEntities: string[];
   columns: {
     id: number;
   };
