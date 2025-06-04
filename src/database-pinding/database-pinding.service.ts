@@ -141,6 +141,7 @@ export class DatabasePindingService {
         const columnNames = entity.columns.map((column) => column.databaseName);
         schema[tableName] = columnNames;
       });
+
       const userphrase = idPindingDto.phrase;
       const indexofat = userphrase.indexOf('@');
       const userPrompt = userphrase.substring(0, indexofat);
@@ -172,9 +173,7 @@ export class DatabasePindingService {
               }}
 
               Rules:
-
-              - Do not include any explanation or extra text.
-              - Only return valid JSON.
+              
               - Follow the structure strictly.
 
               Schema:
@@ -227,39 +226,25 @@ export class DatabasePindingService {
         {} as Record<string, boolean>,
       );
 
-      console.log(relationsObj);
-
       const alldata = await this.dataSource.manager.find(rootEntityClass, {
         where: columns,
         relations: relationsObj,
       });
-      res.send(alldata);
+      console.log(alldata);
 
-      // const allData = await this.userRepositry.find({
-      //   where: {
-      //     id: userId,
-      //     posts: { id: postId },
-      //     likes
-      //   },
-      //   relations: {
-      //     posts: true,
-      //     likes: true,
-      //   },
-      // });
+      const answerPrompt = new PromptTemplate({
+        inputVariables: ['phrase', 'schema', 'data'],
+        template: `i will give you a question and DB schema and i want you to answer this question with the data i inform you with,\n\n{phrase} \n\n{schema} \n\n{data}`,
+      });
 
-      //   const prompt = new PromptTemplate({
-      //     inputVariables: ['phrase', 'schema', 'data'],
-      //     template: `i will give you a phrase and DB schema and i want you to pind this phrase with the data i inform you with,\n\n{phrase} \n\n{schema} \n\n{data}`,
-      //   });
+      const formatted = await answerPrompt.format({
+        phrase: userPrompt,
+        schema,
+        data: alldata,
+      });
+      const answer = await model.invoke(formatted);
 
-      //   const formatted = await prompt.format({
-      //     phrase: userPrompt,
-      //     schema,
-      //     data: allData,
-      //   });
-      //   const stream = await model.invoke(formatted);
-
-      //   res.send(stream.content);
+      res.send(answer.content);
     } catch (error) {
       handleError(error);
     }
